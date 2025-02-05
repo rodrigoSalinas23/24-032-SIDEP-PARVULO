@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cl.mineduc.sidep.parvuloapi.mappers.FichaParvuloMapper">
+    <resultMap id="fichaParvulo" type="cl.mineduc.sidep.parvuloapi.models.FichaParvuloModel">
+        <id property="id" column="pk_fipa_id_ficha_parvulo"/>
+        <result property="alumnoPrioritario" column="fipa_alumno_prioritario"/>
+        <result property="direccion" column="fipa_direccion"/>
+        <result property="direccionNumero" column="fipa_direccion_numero"/>
+        <result property="direccionReferencia" column="fipa_direccion_referencia"/>
+        <result property="codigoPostal" column="fipa_codigo_postal"/>
+        <result property="telefono" column="fipa_telefono"/>
+        <result property="celular" column="fipa_celular"/>
+        <result property="email" column="fipa_mail"/>
+        <result property="fechaCreacion" column="fipa_fecha_creacion"/>
+        <result property="fechaActualizacion" column="fipa_fecha_actualizacion"/>
+        <result property="necesidadesEspeciales" column="nees_nombre"/>
+
+        <association property="comuna" javaType="cl.mineduc.sidep.parvuloapi.models.ComunaModel">
+            <id property="id" column="pk_comu_id_comuna"/>
+            <result property="nombre" column="comu_nombre"/>
+
+            <association property="provincia" javaType="cl.mineduc.sidep.parvuloapi.models.ProvinciaModel">
+                <id property="id" column="pk_prov_id_provincia"/>
+                <result property="nombre" column="prov_nombre"/>
+
+                <association property="region" javaType="cl.mineduc.sidep.parvuloapi.models.RegionModel">
+                    <id property="id" column="pk_regi_id_region"/>
+                    <result property="nombre" column="regi_nombre"/>
+                </association>
+            </association>
+        </association>
+
+        <association property="parvulo" javaType="cl.mineduc.sidep.parvuloapi.models.ParvuloModel">
+            <id property="id" column="pk_parv_id_parvulo"/>
+            <result property="fechaCreacion" column="parv_fecha_creacion"/>
+            <result property="fechaActualizacion" column="parv_fecha_actualizacion"/>
+
+            <association property="persona" javaType="cl.mineduc.sidep.parvuloapi.models.PersonaModel">
+                <id property="id" column="pk_pers_id_persona"/>
+                <result property="nombre" column="pers_nombre"/>
+                <result property="rut" column="pers_rut"/>
+                <result property="dv" column="pers_dv"/>
+                <result property="nombre" column="pers_nombre"/>
+                <result property="primerApellido" column="pers_primer_apellido"/>
+                <result property="segundoApellido" column="pers_segundo_apellido"/>
+                <result property="fechaNacimiento" column="pers_fecha_nacimiento"/>
+                <result property="fechaDefuncion" column="pers_fecha_defuncion"/>
+
+                <association property="etnia" javaType="cl.mineduc.sidep.parvuloapi.models.EtniaModel">
+                    <id property="id" column="pk_etni_id_etnia"/>
+                    <result property="nombre" column="etni_nombre"/>
+                </association>
+                <association property="nacionalidad" javaType="cl.mineduc.sidep.parvuloapi.models.NacionalidadModel">
+                    <id property="id" column="pk_naci_id_nacionalidad"/>
+                    <result property="nombre" column="naci_nombre"/>
+                </association>
+                <association property="estadoCivil" javaType="cl.mineduc.sidep.parvuloapi.models.EstadoCivilModel">
+                    <id property="id" column="pk_esci_id_estado_civil"/>
+                    <result property="nombre" column="esci_nombre"/>
+                </association>
+                <association property="sexo" javaType="cl.mineduc.sidep.parvuloapi.models.SexoModel">
+                    <id property="id" column="pk_sexo_id_sexo"/>
+                    <result property="nombre" column="sexo_nombre"/>
+                </association>
+            </association>
+        </association>
+    </resultMap>
+
+    <sql id="selectFichaParvulo">
+        SELECT
+            fipa.*,
+
+            comu.pk_comu_id_comuna,
+            comu.comu_nombre,
+
+            prov.pk_prov_id_provincia,
+            prov.prov_nombre,
+
+            regi.pk_regi_id_region,
+            regi.regi_nombre,
+
+            nees.pk_nees_id_necesidades_especiales,
+            nees.nees_nombre,
+
+            parv.pk_parv_id_parvulo,
+            parv.parv_fecha_creacion,
+            parv.parv_fecha_actualizacion,
+
+            pers.pk_pers_id_persona,
+            pers.pers_nombre,
+            pers.pers_rut,
+            pers.pers_dv,
+            pers.pers_primer_apellido,
+            pers.pers_segundo_apellido,
+            pers.pers_fecha_nacimiento,
+            pers.pers_fecha_defuncion,
+
+            etni.pk_etni_id_etnia,
+            etni.etni_nombre,
+
+            naci.pk_naci_id_nacionalidad,
+            naci.naci_nombre,
+
+            esci.pk_esci_id_estado_civil,
+            esci.esci_nombre,
+
+            sexo.pk_sexo_id_sexo,
+            sexo.sexo_nombre
+        FROM ficha_parvulo fipa
+                 LEFT JOIN comuna comu ON fipa.fk_fipa_comuna_id = comu.pk_comu_id_comuna
+                 LEFT JOIN provincia prov ON comu.fk_comu_id_provincia = prov.pk_prov_id_provincia
+                 LEFT JOIN region regi ON prov.fk_prov_id_region = regi.pk_regi_id_region
+                 LEFT JOIN necesidades_especiales nees ON fipa.fk_fipa_nees_id = nees.pk_nees_id_necesidades_especiales
+                 LEFT JOIN parvulo parv ON fipa.fk_fipa_parvulo_id = parv.pk_parv_id_parvulo
+                 LEFT JOIN persona pers ON parv.fk_parv_id_persona = pers.pk_pers_id_persona
+                 LEFT JOIN etnia etni ON pers.fk_pers_id_etnia = etni.pk_etni_id_etnia
+                 LEFT JOIN nacionalidad naci ON pers.fk_pers_id_nacionalidad = naci.pk_naci_id_nacionalidad
+                 LEFT JOIN estado_civil esci ON pers.fk_pers_id_estado_civil = esci.pk_esci_id_estado_civil
+                 LEFT JOIN sexo sexo ON pers.fk_pers_id_sexo = sexo.pk_sexo_id_sexo
+    </sql>
+
+    <select id="findAll" resultMap="fichaParvulo">
+        <include refid="selectFichaParvulo" />
+    </select>
+
+    <select id="findById" parameterType="Long" resultMap="fichaParvulo">
+        <include refid="selectFichaParvulo" />
+        WHERE fipa.pk_fipa_id_ficha_parvulo = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="pk_fipa_id_ficha_parvulo"
+            parameterType="cl.mineduc.sidep.parvuloapi.entities.FichaParvuloEntity">
+        INSERT INTO ficha_parvulo (
+            fk_fipa_comuna_id,
+            fk_fipa_nees_id,
+            fk_fipa_parvulo_id,
+            fipa_alumno_prioritario,
+            fipa_direccion,
+            fipa_direccion_numero,
+            fipa_direccion_referencia,
+            fipa_codigo_postal,
+            fipa_telefono,
+            fipa_celular,
+            fipa_mail,
+            fipa_fecha_creacion
+        )
+        VALUES (
+                   #{comuna},
+                   #{necesidadesEspeciales},
+                   #{parvulo},
+                   #{alumnoPrioritario},
+                   #{direccion},
+                   #{direccionNumero},
+                   #{direccionReferencia},
+                   #{codigoPostal},
+                   #{telefono},
+                   #{celular},
+                   #{email},
+                   CURRENT_TIMESTAMP
+               )
+    </insert>
+
+    <update id="update" parameterType="cl.mineduc.sidep.parvuloapi.entities.FichaParvuloEntity">
+        UPDATE ficha_parvulo
+        SET
+            fk_fipa_comuna_id         = #{fipa.comuna},
+            fk_fipa_nees_id           = #{fipa.necesidadesEspeciales},
+            fk_fipa_parvulo_id        = #{fipa.parvulo},
+            fipa_alumno_prioritario   = #{fipa.alumnoPrioritario},
+            fipa_direccion            = #{fipa.direccion},
+            fipa_direccion_numero     = #{fipa.direccionNumero},
+            fipa_direccion_referencia = #{fipa.direccionReferencia},
+            fipa_codigo_postal        = #{fipa.codigoPostal},
+            fipa_telefono             = #{fipa.telefono},
+            fipa_celular              = #{fipa.celular},
+            fipa_mail                = #{fipa.email},
+            fipa_fecha_actualizacion  = CURRENT_TIMESTAMP
+        WHERE pk_fipa_id_ficha_parvulo = #{id}
+    </update>
+
+    <select id="hasComuna" resultType="java.lang.Boolean">
+        SELECT CASE WHEN COUNT(pk_comu_id_comuna) > 0 THEN 1 ELSE 0 END AS result
+        FROM comuna
+        WHERE pk_comu_id_comuna = #{id}
+    </select>
+
+    <select id="hasNecesidadesEspeciales" resultType="java.lang.Boolean">
+        SELECT CASE WHEN COUNT(pk_nees_id_necesidades_especiales) > 0 THEN 1 ELSE 0 END AS result
+        FROM necesidades_especiales
+        WHERE pk_nees_id_necesidades_especiales = #{id}
+    </select>
+
+    <select id="hasParvulo" resultType="java.lang.Boolean">
+        SELECT CASE WHEN COUNT(pk_parv_id_parvulo) > 0 THEN 1 ELSE 0 END AS result
+        FROM parvulo
+        WHERE pk_parv_id_parvulo = #{id}
+    </select>
+
+</mapper>

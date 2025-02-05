@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cl.mineduc.sidep.parvuloapi.mappers.ParvuloMapper">
+    <resultMap id="parvulo" type="cl.mineduc.sidep.parvuloapi.models.ParvuloModel">
+        <id property="id" column="pk_parv_id_parvulo"/>
+        <result property="fechaCreacion" column="parv_fecha_creacion"/>
+        <result property="fechaActualizacion" column="parv_fecha_actualizacion"/>
+
+        <association property="persona" javaType="cl.mineduc.sidep.parvuloapi.models.PersonaModel">
+            <id property="id" column="pk_pers_id_persona"/>
+            <result property="nombre" column="pers_nombre"/>
+            <result property="rut" column="pers_rut"/>
+            <result property="dv" column="pers_dv"/>
+            <result property="nombre" column="pers_nombre"/>
+            <result property="primerApellido" column="pers_primer_apellido"/>
+            <result property="segundoApellido" column="pers_segundo_apellido"/>
+            <result property="fechaNacimiento" column="pers_fecha_nacimiento"/>
+            <result property="fechaDefuncion" column="pers_fecha_defuncion"/>
+
+            <association property="etnia" javaType="cl.mineduc.sidep.parvuloapi.models.EtniaModel">
+                <id property="id" column="pk_etni_id_etnia"/>
+                <result property="nombre" column="etni_nombre"/>
+            </association>
+            <association property="nacionalidad" javaType="cl.mineduc.sidep.parvuloapi.models.NacionalidadModel">
+                <id property="id" column="pk_naci_id_nacionalidad"/>
+                <result property="nombre" column="naci_nombre"/>
+            </association>
+            <association property="estadoCivil" javaType="cl.mineduc.sidep.parvuloapi.models.EstadoCivilModel">
+                <id property="id" column="pk_esci_id_estado_civil"/>
+                <result property="nombre" column="esci_nombre"/>
+            </association>
+            <association property="sexo" javaType="cl.mineduc.sidep.parvuloapi.models.SexoModel">
+                <id property="id" column="pk_sexo_id_sexo"/>
+                <result property="nombre" column="sexo_nombre"/>
+            </association>
+        </association>
+    </resultMap>
+
+    <sql id="selectParvulo">
+        SELECT
+            p.pk_parv_id_parvulo,
+            p.parv_fecha_creacion,
+            p.parv_fecha_actualizacion,
+
+            per.pk_pers_id_persona,
+            per.pers_nombre,
+            per.pers_rut,
+            per.pers_dv,
+            per.pers_primer_apellido,
+            per.pers_segundo_apellido,
+            per.pers_fecha_nacimiento,
+            per.pers_fecha_defuncion,
+
+            et.pk_etni_id_etnia,
+            et.etni_nombre,
+
+            na.pk_naci_id_nacionalidad,
+            na.naci_nombre,
+
+            ec.pk_esci_id_estado_civil,
+            ec.esci_nombre,
+
+            sx.pk_sexo_id_sexo,
+            sx.sexo_nombre
+
+        FROM parvulo p
+                 LEFT JOIN persona per ON p.fk_parv_id_persona = per.pk_pers_id_persona
+                 LEFT JOIN etnia et ON per.fk_pers_id_etnia = et.pk_etni_id_etnia
+                 LEFT JOIN nacionalidad na ON per.fk_pers_id_nacionalidad= na.pk_naci_id_nacionalidad
+                 LEFT JOIN estado_civil ec ON per.fk_pers_id_estado_civil = ec.pk_esci_id_estado_civil
+                 LEFT JOIN sexo sx ON per.fk_pers_id_sexo = sx.pk_sexo_id_sexo
+    </sql>
+
+    <select id="findAll" resultMap="parvulo">
+        <include refid="selectParvulo" />
+    </select>
+
+    <select id="findById" parameterType="Long" resultMap="parvulo">
+        <include refid="selectParvulo" />
+        WHERE p.pk_parv_id_parvulo = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" keyColumn="pk_parv_id_parvulo"
+            parameterType="cl.mineduc.sidep.parvuloapi.entities.ParvuloEntity">
+        INSERT INTO parvulo (fk_parv_id_persona, parv_fecha_creacion)
+        VALUES (#{persona}, CURRENT_TIMESTAMP)
+    </insert>
+
+    <update id="update" parameterType="cl.mineduc.sidep.parvuloapi.entities.ParvuloEntity">
+        UPDATE parvulo
+        SET fk_parv_id_persona = #{p.persona},
+            parv_fecha_actualizacion = CURRENT_TIMESTAMP
+        WHERE pk_parv_id_parvulo = #{id}
+    </update>
+
+    <select id="hasPersona" resultType="java.lang.Boolean">
+        SELECT CASE WHEN COUNT(pk_pers_id_persona) > 0 THEN 1 ELSE 0 END AS result
+        FROM persona
+        WHERE pk_pers_id_persona = #{id}
+    </select>
+
+</mapper>
