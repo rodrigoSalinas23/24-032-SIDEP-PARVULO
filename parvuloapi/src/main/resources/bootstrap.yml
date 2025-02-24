@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: api-sidep-funcionario
+  cloud:
+    config:
+      failFast: true
+      uri: http://dockerdesa.mineduc.cl/properties-centralizados/
+      server:
+        native:
+          searchLocations: classpath:/
+
