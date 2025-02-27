@@ -38,6 +38,7 @@ public class ParvuloServiceImpl implements ParvuloService {
     }
 
     @Override
+    @Transactional
     public ParvuloModel save(ParvuloModel parvuloModel) {
         this.validateForeignKeys(parvuloModel);
 
@@ -47,27 +48,16 @@ public class ParvuloServiceImpl implements ParvuloService {
         parvuloModel.setId(entity.getId());
         parvuloModel.setFechaCreacion(entity.getFechaCreacion());
 
-        procesoRepository.save(ProcesoUtils.getProcesoEntity(
-                HttpStatus.OK.value(),
-                    "POST - /parvulo",
-                    "OK"
-        ));
-
         return this.parvuloRepository.findById(entity.getId());
     }
 
     @Override
+    @Transactional
     public ParvuloModel update(Long id, ParvuloModel parvuloModel) {
         this.validateForeignKeys(parvuloModel);
 
         ParvuloEntity entity = this.toEntity(parvuloModel);
         this.parvuloRepository.update(id, entity);
-
-        procesoRepository.save(ProcesoUtils.getProcesoEntity(
-                HttpStatus.OK.value(),
-                    "PUT - /parvulo/" + id,
-                    "OK"
-        ));
 
         return this.parvuloRepository.findById(id);
     }

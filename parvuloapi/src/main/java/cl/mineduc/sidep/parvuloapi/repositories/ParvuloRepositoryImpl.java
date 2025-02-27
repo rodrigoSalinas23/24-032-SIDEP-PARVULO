@@ -41,7 +41,6 @@ public class ParvuloRepositoryImpl implements ParvuloRepository {
     }
 
     @Override
-    @Transactional
     public void save(ParvuloEntity parvuloEntity) {
         try {
             this.parvuloMapper.insert(parvuloEntity);
@@ -52,7 +51,6 @@ public class ParvuloRepositoryImpl implements ParvuloRepository {
     }
 
     @Override
-    @Transactional
     public void update(Long id, ParvuloEntity parvuloEntity) {
         try {
             this.parvuloMapper.update(id, parvuloEntity);
