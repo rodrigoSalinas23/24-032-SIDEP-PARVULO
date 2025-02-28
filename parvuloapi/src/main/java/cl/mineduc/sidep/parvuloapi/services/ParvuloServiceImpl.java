@@ -21,7 +21,6 @@ import java.util.List;
 public class ParvuloServiceImpl implements ParvuloService {
 
     private final ParvuloRepository parvuloRepository;
-    private final ProcesoRepository procesoRepository;
 
     @Override
     @Transactional(readOnly = true)

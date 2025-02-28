@@ -18,9 +18,14 @@ public interface ParvuloService {
     default ParvuloEntity toEntity(ParvuloModel model) {
         ParvuloEntity entity = new ParvuloEntity();
 
-        entity.setPersona(model.getPersona().getId() != null ? model.getPersona().getId() : null);
+        if (model.getPersona() != null) {
+            entity.setPersona(model.getPersona().getId());
+        } else {
+            entity.setPersona(null);
+        }
 
         return entity;
+
     }
 
 }
